@@ -1,0 +1,76 @@
+train:
+    # keyword: "default_+_3_layers_AE"
+    keyword: "clean_estimate_+_3_layers"
+
+dataset:
+    # noise_type:
+    #     [
+    #         "white",
+    #         "0_air_conditioner",
+    #         "2_children_playing",
+    #         "4_drilling",
+    #         "5_engine_idling",
+    #     ]
+    # noise_type: "white"
+    # noise_type: "4_drilling"
+    # noise_type: "9_street_music"
+    # noise_type: "5_engine_idling"
+    noise_type: "0_air_conditioner"
+    noise_dir_path: ${project.root_dir}/data/source/urban
+    clean_dir_path: ${project.root_dir}/data/source/clean
+    clean_file_path: null
+    noise_file_path: null
+    # snr_level: [0, 5, 10] # 配列で定義
+    snr_level: 5
+    # sample_rate: [48000, 16000] # 配列で定義
+    # sample_rate: 48000
+    sample_rate: 16000
+    noise_samples: 5
+    clean_samples: 5
+    # max_len: 65408
+    max_len: 32704
+    n_fft: 1022
+    # hop_length: 128
+    hop_length: 64
+
+model:
+    input_channels: 1
+    # embed_dim: [32, 64, 128]
+    embed_dim: 64
+    # subsample_k: [2, 4, 8, 16] # 配列で定義
+    # subsample_k: 8
+    subsample_k: [2, 4, 8, 16, 32, 64]
+    # loss_type: "normal"
+    loss_type: "stft"
+    # loss_type: "more noisy"
+    # loss_type: "spectral subtraction"
+
+training:
+    batch_size: 1
+    max_epoch: 200
+    early_stopping:
+        patience: 50
+    optimizer:
+        type: Adam
+        params:
+            lr: 1e-3
+    scheduler:
+        # type: CosineAnnealingLR
+        # params:
+        #     T_max: 1000
+        #     eta_min: 1e-4
+        type: "OneCycleLR"
+        params:
+            max_lr: 1e-2
+            epochs: 200
+            steps_per_epoch: 1
+
+project:
+    name: SE-with-SubSampler
+    root_dir: "/workspace/app/SE-with-SubSampler/"
+    log_dir: ${project.root_dir}/logs/wandb
+
+hydra:
+    output_subdir: null
+    run:
+        dir: "."
