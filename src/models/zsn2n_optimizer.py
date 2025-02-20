@@ -13,28 +13,20 @@ class ZSN2NOptimizer:
             self.scheduler_params = config.training.scheduler.params
 
     def configure_optimizers(self):
-        # オプティマイザの選択
-        if self.optimizer_type == "Adam":
-            optimizer = torch.optim.Adam(self.parameters(), **self.optimizer_params)
-        elif self.optimizer_type == "AdamW":
-            optimizer = torch.optim.AdamW(self.parameters(), **self.optimizer_params)
-        else:
+        # Optimizerの設定
+        optimizer_cls = getattr(torch.optim, self.optimizer_type, None)
+        if optimizer_cls is None:
             raise ValueError(f"Unsupported optimizer type: {self.optimizer_type}")
+        optimizer = optimizer_cls(self.parameters(), **self.optimizer_params)
 
-        # スケジューラの選択
-        if self.scheduler_type == "StepLR":
-            scheduler = torch.optim.lr_scheduler.StepLR(optimizer, **self.scheduler_params)
-        elif self.scheduler_type == "ExponentialLR":
-            scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, **self.scheduler_params)
-        elif self.scheduler_type == "ReduceLROnPlateau":
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, **self.scheduler_params)
-        elif self.scheduler_type == "OneCycleLR":
-            scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, **self.scheduler_params)
-        elif self.scheduler_type == "CosineAnnealingLR":
-            scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, **self.scheduler_params)
-        elif self.scheduler_type is None:
+        # scheduler_typeが指定されていなければoptimizerのみ返す
+        if not self.scheduler_type:
             return optimizer
-        else:
+
+        # Schedulerの設定
+        scheduler_cls = getattr(torch.optim.lr_scheduler, self.scheduler_type, None)
+        if scheduler_cls is None:
             raise ValueError(f"Unsupported scheduler type: {self.scheduler_type}")
+        scheduler = scheduler_cls(optimizer, **self.scheduler_params)
 
         return {"optimizer": optimizer, "lr_scheduler": scheduler}

@@ -74,7 +74,8 @@ def main(cfg: DictConfig):
         # print(f"dataset_number : {cfg.dataset.clean_file_path.split('/')[-1]}")
         dataset = SpeechDataset(cfg)
         model = ZSN2N(cfg)
-        accelerator = "cuda"
+        # accelerator = "cuda"
+        accelerator = "cpu"
         devices = [1]
 
         progress_bar = RichProgressBar(
@@ -105,19 +106,16 @@ def main(cfg: DictConfig):
             f"hop_length": cfg.dataset.hop_length,
             f"subsample_k": cfg.model.subsample_k,
             f"embed_dim": cfg.model.embed_dim,
-            f"clean_file": cfg.dataset.clean_file_path.split('/')[-1],
-            f"noise_file": cfg.dataset.noise_file_path.split('/')[-1],
+            f"clean_file": cfg.dataset.clean_file_path.split("/")[-1],
+            f"noise_file": cfg.dataset.noise_file_path.split("/")[-1],
             f"epochs": cfg.training.max_epoch,
             f"optimizer": cfg.training.optimizer.type,
             f"learning_rate": cfg.training.optimizer.params.lr,
             f"scheduler": cfg.training.scheduler.type,
-            f"scheduler_max_lr": cfg.training.scheduler.params.max_lr
+            f"scheduler_max_lr": cfg.training.scheduler.params.max_lr,
         }
-        
-        tags = [
-            f"noise_type: {cfg.dataset.noise_type}",
-            f"network: {cfg.model.keyword}"
-        ]
+
+        tags = [f"noise_type: {cfg.dataset.noise_type}", f"network: {cfg.model.keyword}"]
 
         # MLflowLoggerの設定
         logger = WandbLogger(
@@ -128,13 +126,12 @@ def main(cfg: DictConfig):
             offline=False,
             reinit=True,
             tags=tags,
-            config = config
-            
+            config=config,
         )
 
         trainer = l.Trainer(
             accelerator=accelerator,
-            devices=devices,
+            # devices=devices,
             max_epochs=cfg.training.max_epoch,
             callbacks=[progress_bar, early_stopping],
             # callbacks=[progress_bar],
@@ -151,7 +148,7 @@ def main(cfg: DictConfig):
 
         # 予測の実行
         trainer.predict(model, data_loader)
-        
+
         wandb.finish()
 
 

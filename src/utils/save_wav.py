@@ -10,8 +10,8 @@ from io import BytesIO
 
 
 def show_spec_and_save_pdf(wav, title, sample_rate):
-    hop_length = 256
-    n_fft = 1024
+    hop_length = 64
+    n_fft = 1022
     sample_rate = sample_rate
     min_db = -90
     max_db = 0
