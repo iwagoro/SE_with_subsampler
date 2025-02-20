@@ -1,6 +1,12 @@
 train:
-    # keyword: "default_+_3_layers_AE"
-    keyword: "clean_estimate_+_3_layers"
+    project_keyword: "cubic_spline_with_time_domain"
+    # project_keyword: "simple_downsampling_with_time_domain"
+    # project_keyword: "stretch_signal_by_two"
+    # project_keyword: "ununiform_sampling"
+    # project_keyword: "ununiform_sampling_with_ss"
+    # project_keyword: "ununiform_sampling_with_time_domain"
+    # keyword: "clean_estimate_+_3_layers"
+    # keyword: "3_layers_AE_+_simple_downsample"
 
 dataset:
     # noise_type:
@@ -12,10 +18,16 @@ dataset:
     #         "5_engine_idling",
     #     ]
     # noise_type: "white"
-    # noise_type: "4_drilling"
-    # noise_type: "9_street_music"
-    # noise_type: "5_engine_idling"
     noise_type: "0_air_conditioner"
+    # noise_type: "1_car_horn"
+    # noise_type: "2_children_playing"
+    # noise_type: "3_dog_bark"
+    # noise_type: "4_drilling"
+    # noise_type: "5_engine_idling"
+    # noise_type: "6_gun_shot"
+    # noise_type: "7_jackhammer"
+    # noise_type: "8_siren"
+    # noise_type: "9_street_music"
     noise_dir_path: ${project.root_dir}/data/source/urban
     clean_dir_path: ${project.root_dir}/data/source/clean
     clean_file_path: null
@@ -34,16 +46,13 @@ dataset:
     hop_length: 64
 
 model:
+    is_lp: False
+    is_ss: False
+    keyword: "3_layers_DCU-Net"
     input_channels: 1
-    # embed_dim: [32, 64, 128]
-    embed_dim: 64
-    # subsample_k: [2, 4, 8, 16] # 配列で定義
-    # subsample_k: 8
+    embed_dim: 32
+    # subsample_k:
     subsample_k: [2, 4, 8, 16, 32, 64]
-    # loss_type: "normal"
-    loss_type: "stft"
-    # loss_type: "more noisy"
-    # loss_type: "spectral subtraction"
 
 training:
     batch_size: 1

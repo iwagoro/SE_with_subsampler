@@ -98,28 +98,38 @@ def main(cfg: DictConfig):
             # verbose=True,
         )
 
+        config = {
+            f"snr_level": cfg.dataset.snr_level,
+            f"sample_rate": cfg.dataset.sample_rate,
+            f"n_fft": cfg.dataset.n_fft,
+            f"hop_length": cfg.dataset.hop_length,
+            f"subsample_k": cfg.model.subsample_k,
+            f"embed_dim": cfg.model.embed_dim,
+            f"clean_file": cfg.dataset.clean_file_path.split('/')[-1],
+            f"noise_file": cfg.dataset.noise_file_path.split('/')[-1],
+            f"epochs": cfg.training.max_epoch,
+            f"optimizer": cfg.training.optimizer.type,
+            f"learning_rate": cfg.training.optimizer.params.lr,
+            f"scheduler": cfg.training.scheduler.type,
+            f"scheduler_max_lr": cfg.training.scheduler.params.max_lr
+        }
+        
         tags = [
-            f"snr_level: {cfg.dataset.snr_level}",
-            f"sample_rate: {cfg.dataset.sample_rate}",
-            f"max_len: {cfg.dataset.max_len}",
-            f"n_fft: {cfg.dataset.n_fft}",
-            f"hop_length: {cfg.dataset.hop_length}",
-            f"embed_dim: {cfg.model.embed_dim}",
-            f"subsample_k: {cfg.model.subsample_k}",
-            f"loss_type: {cfg.model.loss_type}",
-            f"clean_file: {cfg.dataset.clean_file_path.split('/')[-1]}",
-            f"noise_file: {cfg.dataset.noise_file_path.split('/')[-1]}"
+            f"noise_type: {cfg.dataset.noise_type}",
+            f"network: {cfg.model.keyword}"
         ]
 
         # MLflowLoggerの設定
         logger = WandbLogger(
-            project=cfg.dataset.noise_type+"_"+cfg.model.loss_type,
-            name=f"{cfg.train.keyword}_{cfg.model.subsample_k}_{cfg.model.embed_dim}_{cfg.dataset.clean_file_path.split('/')[-1]}",
+            project=cfg.train.project_keyword,
+            name=f"{cfg.model.subsample_k}_{cfg.dataset.clean_file_path.split('/')[-1]}",
             save_dir=cfg.project.log_dir,
-            offline=True,
-            # offline=False,
+            # offline=True,
+            offline=False,
             reinit=True,
             tags=tags,
+            config = config
+            
         )
 
         trainer = l.Trainer(

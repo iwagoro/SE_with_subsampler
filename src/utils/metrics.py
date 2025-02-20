@@ -3,7 +3,7 @@ import librosa
 from torchmetrics.audio import (
     PerceptualEvaluationSpeechQuality,
     ShortTimeObjectiveIntelligibility,
-    DeepNoiseSuppressionMeanOpinionScore,
+    # DeepNoiseSuppressionMeanOpinionScore,
     SignalNoiseRatio,
     ScaleInvariantSignalDistortionRatio,
     SignalDistortionRatio,
